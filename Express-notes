@@ -1,0 +1,29 @@
+//Express-tutorial-notes
+
+const express=require("express");
+const app=express();
+
+app.listen(5000,()=>{
+    console.log("Server running on Port 5000");
+});
+
+app.get("/",(req,res)=>{
+        res.send("Get request done");
+});
+
+app.get("/login",(req,res)=>{
+        res.send("Login page request done");
+});
+
+app.post("/submit",(req,res)=>{
+        res.send("POST req done");
+})
+
+app.put("/update",(req,res)=>{
+        res.send("Update req done");
+})
+
+app.delete("/delete",(req,res)=>{
+        res.send("delete req done");
+})
+

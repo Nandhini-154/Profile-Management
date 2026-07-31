@@ -1,0 +1,373 @@
+
+**MERN Deployment Flow**
+
+```text
+React Frontend
+        │
+        ▼
+Netlify / Vercel
+
+        │
+
+HTTP Request (Axios)
+
+        ▼
+
+Express Backend
+        │
+        ▼
+Render
+
+        │
+        ▼
+
+MongoDB Atlas
+```
+
+> **Note:** Netlify/Vercel **frontend-ku mattum**. Express backend-a **Render** (or Railway) la host pannanum.
+
+---
+
+# STEP 1 - Push Project to GitHub
+
+## Initialize Git
+
+```bash
+git init
+```
+
+## Add Files
+
+```bash
+git add .
+```
+
+## Commit
+
+```bash
+git commit -m "Initial MERN Project"
+```
+
+## Connect GitHub Repo
+
+```bash
+git remote add origin <your-github-repo-url>
+```
+
+## Push
+
+```bash
+git branch -M main
+git push -u origin main
+```
+
+Example:
+
+```
+Frontend/
+Backend/
+README.md
+```
+
+---
+
+# STEP 2 - Deploy Backend (Render)
+
+## Go to
+
+**[https://render.com](https://render.com)**
+
+Login with GitHub.
+
+---
+
+## Click
+
+```
+New +
+
+↓
+
+Web Service
+```
+
+---
+
+Choose your repository.
+
+---
+
+### Fill Details
+
+```
+Name
+profile-backend
+
+Root Directory
+backend
+
+Runtime
+Node
+
+Build Command
+npm install
+
+Start Command
+node server.js
+```
+
+If using nodemon locally, don't use it here.
+
+---
+
+## Add Environment Variable
+
+Go to
+
+```
+Environment
+```
+
+Add
+
+```
+MONGO_URI
+
+mongodb+srv://.....
+```
+
+Click
+
+```
+Deploy
+```
+
+---
+
+After deployment
+
+You'll get
+
+```
+https://profile-backend.onrender.com
+```
+
+Test
+
+```
+https://profile-backend.onrender.com/register
+```
+
+Should return JSON.
+
+---
+
+# STEP 3 - Update Axios
+
+Current
+
+```javascript
+axios.get("http://localhost:5000/register")
+```
+
+Replace
+
+```javascript
+axios.get("https://profile-backend.onrender.com/register")
+```
+
+Similarly
+
+```javascript
+axios.post(...)
+```
+
+```javascript
+axios.put(...)
+```
+
+```javascript
+axios.delete(...)
+```
+
+Change all URLs.
+
+---
+
+# STEP 4 - Build React
+
+Go to frontend
+
+```bash
+npm run build
+```
+
+No errors should come.
+
+---
+
+# STEP 5 - Deploy Frontend (Netlify)
+
+Go to
+
+**[https://app.netlify.com](https://app.netlify.com)**
+
+Login.
+
+---
+
+Click
+
+```
+Add New Site
+
+↓
+
+Import from Git
+```
+
+---
+
+Choose GitHub
+
+↓
+
+Select Repository
+
+---
+
+Settings
+
+```
+Base directory
+
+frontend
+
+Build Command
+
+npm run build
+
+Publish Directory
+
+build
+```
+
+For **Create React App**.
+
+If using **Vite**
+
+```
+dist
+```
+
+---
+
+Click
+
+```
+Deploy
+```
+
+Wait 1 minute.
+
+You'll get
+
+```
+https://amazing-profile.netlify.app
+```
+
+Done 🎉
+
+---
+
+# STEP 6 - Test
+
+```
+Open Website
+
+↓
+
+Submit Form
+
+↓
+
+Netlify
+
+↓
+
+Render
+
+↓
+
+MongoDB Atlas
+
+↓
+
+Success
+
+↓
+
+Cards Display
+```
+
+---
+
+# Using Vercel Instead of Netlify
+
+Go to
+
+**[https://vercel.com](https://vercel.com)**
+
+↓
+
+Import GitHub Repository
+
+↓
+
+Select **frontend**
+
+Framework detected automatically.
+
+↓
+
+Deploy.
+
+---
+
+# One Important Thing
+
+In Express, enable CORS for your deployed frontend.
+
+Example:
+
+```javascript
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "https://your-netlify-app.netlify.app"
+  })
+);
+```
+
+During development, `app.use(cors())` is fine. For production, it's better to restrict the allowed origin to your frontend URL.
+
+---
+
+# Final Architecture
+
+```text
+User
+ │
+ ▼
+Netlify / Vercel (React)
+ │
+ │ Axios
+ ▼
+Render (Express API)
+ │
+ ▼
+MongoDB Atlas
+```
+
+💡 **One correction:** If your React project is **Create React App** (your project has `App.js` and uses `npm start`), use **`build`** as the publish directory. If it's a **Vite** project, use **`dist`** instead.

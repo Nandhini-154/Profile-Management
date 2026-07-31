@@ -1,0 +1,39 @@
+const express=require("express");
+const cors=require("cors");
+
+const app=express();
+
+app.use(cors());
+app.use(express.json());
+
+app.listen(5000, ()=>{
+    console.log("Server running on PORT 5000");
+});
+
+let students=[];
+
+app.get("/", (req, res) => {
+
+    res.send("Backend Working");
+
+});
+
+app.get("/students",(req,res)=>{
+    res.send("Get req");
+});
+app.post('/students', (req, res) => {
+  res.send(req.body);
+});
+
+app.put("/students/:id",(req,res)=>{
+    students.push(req.body);
+    res.send(students);
+})
+
+app.delete("/students/:id",(req,res)=>{
+    const id=req.params.id;
+    students.splice(id,1);
+    res.send("deleted");
+})
+
+

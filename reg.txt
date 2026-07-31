@@ -1,0 +1,170 @@
+//Register 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Profile from "./Profile";
+import "../App.css";
+
+function Register() {
+
+    const [name, setName] = useState("");
+    const [role, setRole] = useState("");
+    const [company, setCompany] = useState("");
+
+    const [people, setPeople] = useState([]);
+
+    const [editId, setEditId] = useState(null);
+
+    useEffect(() => {
+        loadPeople();
+    }, []);
+
+    async function loadPeople() {
+
+        const response = await axios.get("http://localhost:5000/register");
+
+        setPeople(response.data);
+
+    }
+
+    async function handleSubmit(e) {
+
+        e.preventDefault();
+
+        const person = {
+
+            name,
+            role,
+            company
+
+        };
+
+        // UPDATE
+        if (editId) {
+
+            await axios.put(
+                `http://localhost:5000/register/${editId}`,
+                person
+            );
+
+            setEditId(null);
+
+        }
+
+        // CREATE
+        else {
+
+            await axios.post(
+                "http://localhost:5000/register",
+                person
+            );
+
+        }
+
+        loadPeople();
+
+        setName("");
+        setRole("");
+        setCompany("");
+
+    }
+
+    function editPerson(person) {
+
+        setEditId(person._id);
+
+        setName(person.name);
+
+        setRole(person.role);
+
+        setCompany(person.company);
+
+    }
+
+    async function deletePerson(id) {
+
+        await axios.delete(`http://localhost:5000/register/${id}`);
+
+        loadPeople();
+
+    }
+
+    return (
+
+        <div>
+
+            <form onSubmit={handleSubmit}>
+
+                <label>Name</label>
+
+                <input
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+
+                <br /><br />
+
+                <label>Role</label>
+
+                <input
+                    type="text"
+                    placeholder="Enter your role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                />
+
+                <br /><br />
+
+                <label>Company</label>
+
+                <input
+                    type="text"
+                    placeholder="Enter your company"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                />
+
+                <br /><br />
+
+                <button type="submit">
+
+                    {editId ? "Update" : "Submit"}
+
+                </button>
+
+            </form>
+
+            <br />
+
+            <div className="profile">
+
+                {
+
+                    people.map((person) => (
+
+                        <Profile
+
+                            key={person._id}
+
+                            person={person}
+
+                            editPerson={editPerson}
+
+                            deletePerson={deletePerson}
+
+                        />
+
+                    ))
+
+                }
+
+            </div>
+
+        </div>
+
+    );
+
+}
+
+export default Register;
